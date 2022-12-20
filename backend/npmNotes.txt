@@ -1,0 +1,22 @@
+npm init-y to create package.json
+npm i express
+dev dependency (only used during development) npm i nodemon -D 
+changing scripts, adding start and dev
+
+MiddleWare
+functions that are placed in path of req (i.e. http req) that are recieved by back end api
+adds functionality to back end api
+built in, custom, and 3rd party types
+custom - npm i date-fns uuid
+
+
+
+
+
+
+
+
+
+
+
+
