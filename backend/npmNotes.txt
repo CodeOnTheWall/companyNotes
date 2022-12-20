@@ -10,6 +10,13 @@ built in, custom, and 3rd party types
 custom - npm i date-fns uuid
 npm i cookier-parser cors
 
+MongoDB
+npm i dotenv
+
+Mongoose
+npm i mongoose mongoose-sequence
+to communicate with mongoDB more efficiently
+
 
 
 

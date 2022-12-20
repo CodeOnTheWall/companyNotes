@@ -1,3 +1,6 @@
+// allows to use dotenv throughout the package (dont need to import to other files)
+// to use env variables inside rest api
+require("dotenv").config();
 // express
 const express = require("express");
 // all .app is express
@@ -5,16 +8,21 @@ const app = express();
 // nodeJs
 const path = require("path");
 // custom middleware
-const { logger } = require("./middleware/logger");
+const { logger, logEvents } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
-
-// anyone should not be able to get info from our apis
+const connectDB = require("./config/dbConn");
+const mongoose = require("mongoose");
 
 // run on process.env.PORT (prod) otherwise on 3500 (dev)
 const PORT = process.env.PORT || 3500;
+
+console.log(process.env.NODE_ENV);
+
+// initializing connection to DB
+connectDB();
 
 // want to log before any other middlewars
 app.use(logger);
@@ -62,5 +70,19 @@ app.all("*", (req, res) => {
 
 app.use(errorHandler);
 
-// telling app to start listening
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// telling app to start listening on open event
+mongoose.connection.once("open", () => {
+  console.log("Connected to MongoDB");
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});
+
+// listening to error on our connection to mongo
+mongoose.connection.on("error", (err) => {
+  console.log(err);
+  logEvents(
+    // error number
+    `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
+    //  new file to be created if theres mongo error (via logEvents func)
+    "mongoErrLog.log"
+  );
+});
