@@ -8,6 +8,8 @@ functions that are placed in path of req (i.e. http req) that are recieved by ba
 adds functionality to back end api
 built in, custom, and 3rd party types
 custom - npm i date-fns uuid
+npm i cookier-parser cors
+
 
 
 

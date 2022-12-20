@@ -12,10 +12,11 @@ const errorHandler = (err, req, res, next) => {
 
   // server error
   // if there is a statusCode set ? (then) return that status code (res.statusCode)
-  // otherwise the status is 500
+  // otherwise the status is 500, server error
   const status = res.statusCode ? res.statusCode : 500;
 
   // status() sets a HTTP status on the response (as a Javascript object on the server side)
+  // setting the status to whatever our ternery determined
   res.status(status);
 
   res.json({ message: err.message });

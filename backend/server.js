@@ -6,6 +6,12 @@ const app = express();
 const path = require("path");
 // custom middleware
 const { logger } = require("./middleware/logger");
+const errorHandler = require("./middleware/errorHandler");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const corsOptions = require("./config/corsOptions");
+
+// anyone should not be able to get info from our apis
 
 // run on process.env.PORT (prod) otherwise on 3500 (dev)
 const PORT = process.env.PORT || 3500;
@@ -13,8 +19,13 @@ const PORT = process.env.PORT || 3500;
 // want to log before any other middlewars
 app.use(logger);
 
+// stops other website from trying to access our apis
+app.use(cors(corsOptions));
+
 // ability to process json middleware - recieve and parse json data
 app.use(express.json());
+// parse cookies that we recieve
+app.use(cookieParser());
 
 // listening for route route
 // to serve static files such as images, CSS files, and JavaScript files,
@@ -48,6 +59,8 @@ app.all("*", (req, res) => {
     res.type("txt").send("404 Not Found");
   }
 });
+
+app.use(errorHandler);
 
 // telling app to start listening
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
