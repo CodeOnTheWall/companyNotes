@@ -1,7 +1,7 @@
 // express
 const express = require("express");
 const router = express.Router();
-// nodejs
+// nodejs module
 const path = require("path");
 
 // regex, ^ (carrot - at beg of string only) $ (at end of string only)

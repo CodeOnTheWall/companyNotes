@@ -3,6 +3,7 @@ const allowedOrigins = require("./allowedOrigins");
 
 // 3rd party middleware, following their syntax
 const corsOptions = {
+  // if the domain is in the whitelist (!== -1). after development, remove || !origin, this is only for developement
   // going to recieve origin and a callback function
   origin: (origin, callback) => {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {

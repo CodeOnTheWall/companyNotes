@@ -1,6 +1,6 @@
 // A Mongoose schema defines the structure of the document, default values,
-//  validators, etc., whereas a Mongoose model provides an interface to the
-//  database for creating, querying, updating, deleting records
+// validators, etc., whereas a Mongoose model provides an interface to the
+// database for creating, querying, updating, deleting records
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
@@ -13,12 +13,10 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   //   using array as there is an array of roles, different types of roles
-  roles: [
-    {
-      type: String,
-      default: "Employee",
-    },
-  ],
+  roles: {
+    type: [String],
+    default: ["Employee"],
+  },
   active: {
     type: Boolean,
     // auto active (true) on new user creation
@@ -26,4 +24,5 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// mongoose will auto make User, users (lowercase and plural)
 module.exports = mongoose.model("User", userSchema);

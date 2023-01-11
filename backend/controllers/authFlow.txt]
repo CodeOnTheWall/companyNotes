@@ -1,0 +1,6 @@
+from front end authApiSlice login mutation func, we receive username and password
+this info 'lands' to the route /auth
+the authController 'handles' this incoming data from front end
+we destructure the username and password from req.body, since on the front end authApiSlice,
+this login mutation func is a get req, hence we receive the username and password from req.body
+if credentials check out, we send back to client app, aT and rT which is inside a jwt http only cookie

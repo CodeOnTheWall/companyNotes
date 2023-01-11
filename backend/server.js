@@ -1,36 +1,42 @@
 // allows to use dotenv throughout the package (dont need to import to other files)
 // to use env variables inside rest api
 require("dotenv").config();
-// express
+// instead of using asyncHandler and wrapping controller funcs, I can use this instead, and will get similar behavior;
+// to limit try and catch blocks, and send unexpected errors to custom error handler
+require("express-async-errors");
+
+// express, all .app (app object) is express as well (inc all its methods, get, post, etc)
 const express = require("express");
-// all .app is express
 const app = express();
+
 // nodeJs
 const path = require("path");
+
 // custom middleware
 const { logger, logEvents } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
+
+// 3rd party middleware
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
 const connectDB = require("./config/dbConn");
 const mongoose = require("mongoose");
+const verifyJWT = require("./middleware/verifyJWT");
 
 // run on process.env.PORT (prod) otherwise on 3500 (dev)
 const PORT = process.env.PORT || 3500;
 
-console.log(process.env.NODE_ENV);
-
-// initializing connection to DB
+// initializing connection to mongoDB via mongoose
 connectDB();
 
-// want to log before any other middlewars
+// want to log before any other middlewares
 app.use(logger);
 
 // stops other website from trying to access our apis
 app.use(cors(corsOptions));
 
-// ability to process json middleware - recieve and parse json data
+// ability to process json middleware - recieve and parse json data to js objects
 app.use(express.json());
 // parse cookies that we recieve
 app.use(cookieParser());
@@ -40,13 +46,16 @@ app.use(cookieParser());
 // use the express.static built-in middleware function in Express.
 // __dirname is a global variable that nodejs understands (look inside folder that we are in (of current file opened))
 // so look inside backend dir, then look for public folder
-// express.static is built in middleware
 app.use("/", express.static(path.join(__dirname, "public")));
 // or, since its relative to folder we are in
 // app.use(express.static('public'))
 
-// listening to ./routes/root
+// listening to ./routes/root and other routes
 app.use("/", require("./routes/root"));
+app.use("/auth", require("./routes/authRoutes"));
+app.use(verifyJWT);
+app.use("/users", require("./routes/userRoutes"));
+app.use("/notes", require("./routes/noteRoutes"));
 
 // put this after all the other routes to handle anything (*) not found
 // status() sets a HTTP status on the response (as a Javascript object on

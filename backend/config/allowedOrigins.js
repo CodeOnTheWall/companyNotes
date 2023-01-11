@@ -1,9 +1,10 @@
 const allowedOrigins = [
   // for dev
   "http://localhost:3500",
-  //   for prod
-  "https://www.EliteSoftwareSolutions.com",
-  "https://EliteSoftwareSolutions.com",
+  "http://localhost:3000",
+  //  for prod
+  "https://www.WalterWhiteRepairs.com",
+  "https://WalterWhiteRepairs.com",
 ];
 
 module.exports = allowedOrigins;

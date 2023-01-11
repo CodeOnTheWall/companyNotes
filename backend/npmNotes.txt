@@ -17,6 +17,14 @@ Mongoose
 npm i mongoose mongoose-sequence
 to communicate with mongoDB more efficiently
 
+Controller dependencies
+npm i express-async-handler bcrypt
+
+after logging in, users get a JSON Web Token JWT that uses Auth header,
+sent with every http req, allows access to api endpoints, endpoints provide data resources
+
+npm i express-rate-limit
+npm i jsonwebtoken
 
 
 
