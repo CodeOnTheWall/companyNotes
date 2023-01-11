@@ -34,6 +34,11 @@
   margin-bottom: 0.5em;
 }
 
+.errmsg a:any-link {
+  color: var(--ERROR);
+  text-decoration: underline;
+}
+
 .icon-button {
   width: 48px;
   height: 48px;
@@ -178,6 +183,7 @@ a:focus-visible {
 thead,
 tbody,
 tr {
+  /* lets me flatten the table to use css grid */
   display: contents;
 }
 

@@ -28,7 +28,7 @@ const Note = ({ noteId }) => {
     const handleEdit = () => navigate(`/dash/notes/${noteId}`);
 
     return (
-      // table row tr, table cell, td
+      // table row tr, table cell td
       <tr className="table__row">
         <td className="table__cell note__status">
           {/* gets different class based on completion */}

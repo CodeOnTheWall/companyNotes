@@ -9,9 +9,14 @@ const UsersList = () => {
     isSuccess,
     isError,
     error,
-  } = useGetUsersQuery(undefined, {
+  } = useGetUsersQuery("usersList", {
+    // these options are available via adding setUpListeners in store.js
+    // this is for updating every so often, incase multiple employees were on same page
+    // 60 sec, every min, will re query the data
     pollingInterval: 60000,
+    // put focus on another window and come back, re fetch
     refetchOnFocus: true,
+    // if component is mounted, re fetch data
     refetchOnMountOrArgChange: true,
   });
   // console.log(users);
@@ -28,13 +33,14 @@ const UsersList = () => {
   }
 
   if (isSuccess) {
+    // users is an array of ids and entity objects
     const { ids } = users;
 
-    // making sure there are ids (have a length on that array)
-    const tableContent = ids?.length
-      ? // always add key when mapping
-        ids.map((userId) => <User key={userId} userId={userId} />)
-      : null;
+    // if ids is defined, and it has a length. using ? operator so that if ids is undefined it wont throw an error
+    const tableContent =
+      ids?.length &&
+      // always add key when mapping
+      ids.map((userId) => <User key={userId} userId={userId} />);
 
     content = (
       <table className="table table--users">

@@ -17,12 +17,14 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
-  // providing the store to my App
-  <Provider store={store}>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/*" element={<App />} />
-      </Routes>
-    </BrowserRouter>
-  </Provider>
+  <React.StrictMode>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          {/* /* allows to have nested components */}
+          <Route path="/*" element={<App />} />
+        </Routes>
+      </BrowserRouter>
+    </Provider>
+  </React.StrictMode>
 );

@@ -56,6 +56,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
         } else return [{ type: "Note", id: "LIST" }];
       },
     }),
+
     addNewNote: builder.mutation({
       // param expected to be passed in is initialNote
       query: (initialNote) => ({
@@ -67,6 +68,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: "Note", id: "LIST" }],
     }),
+
     updateNote: builder.mutation({
       query: (initialNote) => ({
         url: "/notes",
@@ -79,6 +81,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
       // arg is the passed in initialNote, so invalidate the note that has arg.id and re fetch new data
       invalidatesTags: (result, error, arg) => [{ type: "Note", id: arg.id }],
     }),
+
     deleteNote: builder.mutation({
       query: ({ id }) => ({
         url: `/notes`,

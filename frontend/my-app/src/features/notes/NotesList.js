@@ -1,15 +1,22 @@
 import { useGetNotesQuery } from "./notesApiSlice";
+
 import Note from "./Note";
 
+import useAuth from "../../hooks/useAuth";
+
 const NotesList = () => {
+  const { username, isManager, isAdmin } = useAuth();
+
   const {
     data: notes,
     isLoading,
     isSuccess,
     isError,
     error,
-  } = useGetNotesQuery(undefined, {
-    // find out
+    // giving a label of notesList stops the fetching from happening after logging out
+  } = useGetNotesQuery("notesList", {
+    // options available via setupListeners(store.dispatch) in store.js
+    // want it to update more often so only 15 seconds
     pollingInterval: 15000,
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
@@ -40,12 +47,23 @@ const NotesList = () => {
   }
 
   if (isSuccess) {
-    const { ids } = notes;
+    const { ids, entities } = notes;
+
+    let filteredIds;
+    if (isManager || isAdmin) {
+      // if manager or admin, show all notes
+      filteredIds = [...ids];
+    } else {
+      // else only show the notes of that specific employee (as employee doesnt have authorization to see other notes)
+      filteredIds = ids.filter(
+        (noteId) => entities[noteId].username === username
+      );
+    }
 
     // if ids has a length, map over ids otherwise null
-    const tableContent = ids?.length
-      ? ids.map((noteId) => <Note key={noteId} noteId={noteId} />)
-      : null;
+    const tableContent =
+      ids?.length &&
+      filteredIds.map((noteId) => <Note key={noteId} noteId={noteId} />);
 
     content = (
       <table className="table table--notes">
