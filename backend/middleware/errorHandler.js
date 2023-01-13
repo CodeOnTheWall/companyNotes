@@ -19,7 +19,8 @@ const errorHandler = (err, req, res, next) => {
   // setting the status to whatever our ternery determined
   res.status(status);
 
-  res.json({ message: err.message });
+  // rtkq isError: true
+  res.json({ message: err.message, isError: true });
 };
 
 module.exports = errorHandler;

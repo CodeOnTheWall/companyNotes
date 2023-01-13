@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 
 // login, /auth - post, access public
 const login = async (req, res) => {
+  // req.body - this is the body from authApiSlice on front end
   const { username, password } = req.body;
   if (!username || !password) {
     // if no username or password, send bad req status (400)
@@ -48,9 +49,11 @@ const login = async (req, res) => {
     { expiresIn: "7d" }
   );
 
+  // CLIENT refers to the application that is running on the users device (website/app) thats making req to server
+  // hence we send the frontend/client app the aT and the rT inside a cookie
   // RES to be sent back to client
   // sending client rT via cookie (making it secure via httpOnly - which makes this not available to js),
-  // cookie is sent with every req and gets applied to all paths, server sets the cookie
+  // cookie is sent with every req and gets automatically applied to all paths, and it is stored in clients web browser
   res.cookie("jwt", refreshToken, {
     //accessible only by web server
     httpOnly: true,
@@ -82,7 +85,7 @@ const refresh = (req, res) => {
     refreshToken,
     // rT secret
     process.env.REFRESH_TOKEN_SECRET,
-    asyncHandler(async (err, decoded) => {
+    async (err, decoded) => {
       if (err) return res.status(403).json({ message: "Forbidden" });
 
       // decoded username should be inside rT
@@ -105,7 +108,7 @@ const refresh = (req, res) => {
       );
 
       res.json({ accessToken });
-    })
+    }
   );
 };
 
