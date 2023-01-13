@@ -1,17 +1,23 @@
 // help us remain logged in even when we refresh application
+// otherwise redux state would be wiped and state wouldnt persist
 
-import { Outlet, Link } from "react-router-dom";
+// because of react 18 strict mode, components mount, unmount, and re mount again
+// on initial mount, effectRan useRef value is set to false, in the clean up function, its set to true via useRef. useRef hook allows value to not change
+// in between component re renders (nor does it cause component re renders). Component then unmounts, but, the value of true remains on second mount
+// this then causes the if inside useEffect to run as the ref value is now true, causing the refresh func to run.
+
 import { useEffect, useRef, useState } from "react";
+import { Outlet, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import { useRefreshMutation } from "./authApiSlice";
-import usePersist from "../../hooks/usePersist";
-import { useSelector } from "react-redux";
 import { selectCurrentToken } from "./authSlice";
+import usePersist from "../../hooks/usePersist";
 
 const PersistLogin = () => {
   // true or false
   const [persist] = usePersist();
-  // selectCurrentToken is current access token from state
+  // selectCurrentToken is current access token from state, this should be falsy on a refresh, as redux state is wiped
   const token = useSelector(selectCurrentToken);
   // for strict mode in react 18
   const effectRan = useRef(false);
@@ -39,13 +45,12 @@ const PersistLogin = () => {
         }
       };
 
-      // calling above func which ultimately gets a new aT, if no token and persist is true
-      // when we refresh page, state is wiped out, have no aT or any other state, hence !token
+      // essentially, on a refresh, aT from redux state (inc rest of redux state) is wiped, but cookie containing rT is still there (if it has time left on its i.e. 7 days)
+      // so if no token, which makes sense as redux state was wiped on refresh, and user checked persist off, then run above func
       if (!token && persist) verifyRefreshToken();
     }
 
-    // if effectRan.current !== true, which it should be false on first mount, then set to true
-    // and useRef will hold this value even after after component unmounts and re mounts
+    // this runs on unmount of first mount as a clean up func. And this value then perists itself to second mount
     return () => (effectRan.current = true);
     // to not get any warnings
     // eslint-disable-next-line

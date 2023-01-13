@@ -4,11 +4,9 @@ import { apiSlice } from "../../app/api/apiSlice";
 // entity adapter comes with pre gen reducer functions like addOne, setOne, setMany, removeOne etc (for CRUD)
 // also comes with pre set selectors (getSelector) to read contents of entity state object, like selectIds, selectAll etc etc
 const usersAdapter = createEntityAdapter({});
-// console.log(usersAdapter);
 
-// if initialState exists in usersAdapter, we call getInitialState on the usersAdapter, getInitialState returns
-// a new entity state object like {ids: [], entities: {}}. Hence at end of getUsers builder query, we
-// set the userAdapter with initialState and loadedUsers (each user has an id, and the info on that user is the entity object)
+// getInitialState() is a method provided by the createEntityAdapter function that returns an initial state object for the normalized data. It creates an empty
+// state object with properties ids and entities that are used to store the ids and the entities of the normalized data.
 const initialState = usersAdapter.getInitialState();
 
 // injecting/adding endpoints into the apiSlice
@@ -17,12 +15,13 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     // methods (getUsers, addNewUser etc)
     getUsers: builder.query({
       // /users is an endpoint to make req on
-      query: () => "/users",
-      //   making sure there is not an error, and that i have 200 status (req succeeded)
-      validateStatus: (response, result) => {
-        return response.status === 200 && !result.isError;
-      },
-      //   get response from query (responseData)
+      query: () => ({
+        url: "/users",
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        },
+      }),
+      //  transforming the response from query (calling it responseData)
       transformResponse: (responseData) => {
         const loadedUsers = responseData.map((user) => {
           // the normalized data via the usersAdapter looks for an id property, not _id (mongo id syntax), hence have to format it here
@@ -30,17 +29,16 @@ export const usersApiSlice = apiSlice.injectEndpoints({
           user.id = user._id;
           return user;
         });
-        // putting loadedUsers, which has that new value at the id property
-        // so now userAdapter has normalized value with ids and entities
+        // setting the initialState to have the loadedUsers (now loadedUsers data is inside initialState with a format of ids and entities). now we can use
+        // the usersAdapters reducer funcs and selectors mentioned above on the initialState data
         return usersAdapter.setAll(initialState, loadedUsers);
       },
 
       // providing tags here to be invalidated in the mutated methods for re-fetching of data
-      // all the users from getUsers will have tag types: "Post", and id: "LIST" - if any of these gets invalidated
-      // then the users will be re fetched
-      // the mapping is mapping over the ids of each user, so each user will have tag type: "User", and an id
+      // id: "LIST" indicates the data returned from endpoint is complete list of users, good for invalidating after deletion or adding, as whole list would change
+      // also mapping over the ids of each user, so each user will have tag type: "User", and an id, good for updating
 
-      // result is users in the redux store (from getUsers), arg is the arg passed when we call the query, we want dynamically set id tags,
+      // result is data returned from endpoint (getUsers), arg is the arg passed when we call the query, we want dynamically set id tags,
       // so only the individual thing is re fetched, not everything, improves performance
       providesTags: (result, error, arg) => {
         // console.log(result);
@@ -48,7 +46,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         if (result?.ids) {
           return [
             { type: "User", id: "LIST" },
-            // to invalidate a single id for caching and re-fetching
+            // to invalidate a single id for caching and re-fetching (each user will have tag type User, and an id) - improves performance
             ...result.ids.map((id) => ({ type: "User", id })),
           ];
         } else return [{ type: "User", id: "LIST" }];
@@ -59,6 +57,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       query: (initialUserData) => ({
         url: "/users",
         method: "POST",
+        // body is what is sent to backend, backend access req.body
         body: {
           ...initialUserData,
         },
@@ -75,7 +74,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
           ...initialUserData,
         },
       }),
-      // only invalidating the id of the user to be re fetched (arg is the initialUserData)
+      // only invalidating the id of the user to be re fetched (arg is the initialUserData passed in)
       invalidatesTags: (result, error, arg) => [{ type: "User", id: arg.id }],
     }),
 
@@ -86,6 +85,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
         body: { id },
       }),
+      // arg is id passed in
       invalidatesTags: (result, error, arg) => [{ type: "User", id: arg.id }],
     }),
   }),
@@ -99,8 +99,7 @@ export const {
   useDeleteUserMutation,
 } = usersApiSlice;
 
-// returns the query result object - from getUsers (transformed data goes into the usersAdapter)
-// to get this object, go into the slice, endpoints, getUsers method, then .select() to get entire result object (see console.log(result) in getUsers)
+// select() method returns the query result object chosen, in this case, the data from getUsers (transformed data goes into the usersAdapter)
 export const selectUsersResult = usersApiSlice.endpoints.getUsers.select();
 
 // Creates memoized selector. createSelector recieves input funcs(s) and then has an output func, so here input func being passed in is selectUsersResult query

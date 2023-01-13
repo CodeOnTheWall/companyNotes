@@ -1,24 +1,25 @@
-import { store } from "../../app/store";
-import { notesApiSlice } from "../notes/notesApiSlice";
-import { usersApiSlice } from "../users/usersApiSlice";
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 
-// wrapping all protected pages in this Prefetch component
+// rtkq
+import { store } from "../../app/store";
+import { notesApiSlice } from "../notes/notesApiSlice";
+import { usersApiSlice } from "../users/usersApiSlice";
+
+// prefetching (prefetch is built in) the data from getNotes and getUsers to be put into redux state
+// wrapping all protected pages in this Prefetch component (for data to be pre-available)
+// The values returned by the API requests for "getNotes" and "getUsers" endpoints will be stored in the store's state
+// under the keys "notesList" and "usersList" respectively. These are also the subscription keys
 const Prefetch = () => {
   useEffect(() => {
-    console.log("subscribing");
-    // creating manual subscription (via initiate) to notes and users that will remain active
-    // and not expire in standard 60 sec
-    const notes = store.dispatch(notesApiSlice.endpoints.getNotes.initiate());
-    const users = store.dispatch(usersApiSlice.endpoints.getUsers.initiate());
-
-    // and then unsubscribe if I leave protected pages
-    return () => {
-      console.log("unsubscribing");
-      notes.unsubscribe();
-      users.unsubscribe();
-    };
+    store.dispatch(
+      // endpoint: getNotes, arg to name these: notesList. this data is subscribed to the component, when un mounted, data is unsubscribed
+      // force query even if data already exists
+      notesApiSlice.util.prefetch("getNotes", "notesList", { force: true })
+    );
+    store.dispatch(
+      usersApiSlice.util.prefetch("getUsers", "usersList", { force: true })
+    );
     // empty dependency[] only runs when component mounts
   }, []);
 

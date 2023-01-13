@@ -1,13 +1,21 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
+import { memo } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { useSelector } from "react-redux";
-import { selectUserById } from "./usersApiSlice";
+import { useGetUsersQuery } from "./usersApiSlice";
 
 const User = ({ userId }) => {
-  const user = useSelector((state) => selectUserById(state, userId));
+  // destructuring user from the returned result of selectFromResult. this func takes in the whole data object returned from useGetUsersQuery
+  // which is all users (refer to usersController) and in this case, we are returning back the {user} entity that has the passed in userId
+  const { user } = useGetUsersQuery("usersList", {
+    // data has ids array and entities, finding the user entity by passing in userId
+    selectFromResult: ({ data }) => ({
+      user: data?.entities[userId],
+    }),
+  });
+  // console.log(userId);
+  // console.log(user);
 
   const navigate = useNavigate();
 
@@ -34,4 +42,7 @@ const User = ({ userId }) => {
     );
   } else return null;
 };
-export default User;
+
+// now this component will only re render if there are changes to the data
+const memoizedUser = memo(User);
+export default memoizedUser;

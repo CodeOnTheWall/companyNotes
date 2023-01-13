@@ -14,9 +14,8 @@ const useAuth = () => {
 
   if (token) {
     // decode token and destructure username and roles
-    // in backend rest api code, UserInfo is a property on the token
     const decoded = jwtDecode(token);
-    // reminder when we 'signed' token, we put the info into UserInfo
+    // reminder when we 'signed' token in backend api, we put the info into UserInfo (refer to authController)
     const { username, roles } = decoded.UserInfo;
 
     // checking if includes, which would give a boolean response
@@ -26,10 +25,11 @@ const useAuth = () => {
     if (isManager) status = "Manager";
     if (isAdmin) status = "Admin";
 
+    // return these values into useAuth hook, which can then be used for the RequireAuth hook to grant access to protected routes based on role
     return { username, roles, status, isManager, isAdmin };
   }
 
-  //   returned if dont have token
+  // returned if dont have token
   return { username: "", roles: [], isManager, isAdmin, status };
 };
 export default useAuth;

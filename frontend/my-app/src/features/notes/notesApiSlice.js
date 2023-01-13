@@ -26,11 +26,13 @@ export const notesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getNotes: builder.query({
       // query /notes
-      query: () => "/notes",
-      // if no error and status is 200, (recomended from docs)
-      validateStatus: (response, result) => {
-        return response.status === 200 && !result.isError;
-      },
+      query: () => ({
+        url: "/notes",
+        // if we get unexpected error set to 200 recommended from docs. isError set in backend (error middleware)
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        },
+      }),
       // transforming the res since mongodb id looks like _id, and the entity object looks for just id
       transformResponse: (responseData) => {
         const loadedNotes = responseData.map((note) => {

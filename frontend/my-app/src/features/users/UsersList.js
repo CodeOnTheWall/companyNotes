@@ -4,6 +4,7 @@ import User from "./User";
 
 const UsersList = () => {
   const {
+    // naming data: users
     data: users,
     isLoading,
     isSuccess,
@@ -20,7 +21,7 @@ const UsersList = () => {
     refetchOnMountOrArgChange: true,
   });
   // console.log(users);
-  // entity objects here are all the data associated with the id of the user, the ids array has the ids of those users in it
+  // entity objects here are all the data associated with each user, to get that data, we need the id of the user
   // ID here is id of user, and the entity object is all data associated with that user
   // entity object here {active: true, id, roles, username, etc}
 

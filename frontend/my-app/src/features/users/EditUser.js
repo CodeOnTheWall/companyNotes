@@ -1,20 +1,26 @@
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectUserById } from "./usersApiSlice";
 import EditUserForm from "./EditUserForm";
+import { useGetUsersQuery } from "./usersApiSlice";
+import PulseLoader from "react-spinners/PulseLoader";
+import useTitle from "../../hooks/useTitle";
 
 const EditUser = () => {
+  useTitle("techNotes: Edit User");
+
   // getting user id out of url
   const { id } = useParams();
   // console.log(id);
 
-  // this isnt querying the data again and thats why we dont have subscription
-  // and dont want to send another query when we already have data - hence reference Prefetch.js
-  // pulling individual user data from the state by searching via id
-  const user = useSelector((state) => selectUserById(state, id));
+  const { user } = useGetUsersQuery("usersList", {
+    selectFromResult: ({ data }) => ({
+      user: data?.entities[id],
+    }),
+  });
 
-  // if user, populate the EditUserForm
-  const content = user ? <EditUserForm user={user} /> : <p>Loading...</p>;
+  // if no user, then we are loading
+  if (!user) return <PulseLoader color={"#FFF"} />;
+
+  const content = <EditUserForm user={user} />;
 
   return content;
 };

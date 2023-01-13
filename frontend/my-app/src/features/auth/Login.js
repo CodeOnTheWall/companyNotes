@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-// redux/rtkq
+// rtkq
 import { useDispatch } from "react-redux";
 import { setCredentials } from "./authSlice";
 import { useLoginMutation } from "./authApiSlice";
@@ -13,6 +13,7 @@ const Login = () => {
   const userRef = useRef();
   const errRef = useRef();
 
+  // manage state of component
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
@@ -40,8 +41,9 @@ const Login = () => {
       // passing in username and password into login mutation func which sends these as credentials inside the authApiSlice to /auth
       // this gives us back the aT
       const { accessToken } = await login({ username, password }).unwrap();
-      // dispatching this aT into setCredentials which sets the state to be that token inside authSlice (not authApiSlice as this action doesnt interact with backend api)
+      // dispatching this aT into setCredentials which sets the frontend state object (the state of our app) to be the passed in aT
       dispatch(setCredentials({ accessToken }));
+      // then clearing fields
       setUsername("");
       setPassword("");
       navigate("/dash");

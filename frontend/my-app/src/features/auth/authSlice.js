@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const authSlice = createSlice({
   name: "auth",
-  //   expecting to receive token back from api
+  //   expecting to receive token (aT) back from api
   initialState: { token: null },
   reducers: {
     // when getting data back from api, payload will contain accessToken

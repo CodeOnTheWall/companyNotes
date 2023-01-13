@@ -1,6 +1,10 @@
+// injecting endpoints into our api to interact with backend api
 import { apiSlice } from "../../app/api/apiSlice";
+
+// non api slice (not communicating with back end) that handles frontend state via reducer functions/action handlers
 import { logOut, setCredentials } from "./authSlice";
 
+// requests to be sent to back end api which receive as responses
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation({
@@ -8,7 +12,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
       query: (credentials) => ({
         url: "/auth",
         method: "POST",
-        // spreading in object expected to recieve as credentials into the body object
+        // object expected to be received by the backend, spreading out the credentials into the object
         body: { ...credentials },
       }),
     }),
@@ -46,6 +50,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
           const { data } = await queryFulfilled;
           // console.log(data);
           const { accessToken } = data;
+          // setting redux state with aT
           dispatch(setCredentials({ accessToken }));
         } catch (err) {
           console.log(err);

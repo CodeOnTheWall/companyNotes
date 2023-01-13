@@ -2,14 +2,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 import { useNavigate } from "react-router-dom";
-
-import { useSelector } from "react-redux";
-import { selectNoteById } from "./notesApiSlice";
+import { useGetNotesQuery } from "./notesApiSlice";
+import { memo } from "react";
 
 // this Note.js is the mapped over from NotesList.js, each has a passed in noteId to be selected from state
 const Note = ({ noteId }) => {
-  // finding/selecting note by id
-  const note = useSelector((state) => selectNoteById(state, noteId));
+  const { note } = useGetNotesQuery("notesList", {
+    selectFromResult: ({ data }) => ({
+      // data has ids array and entities, finding the note entity via passing in noteId
+      note: data?.entities[noteId],
+    }),
+  });
 
   const navigate = useNavigate();
 
@@ -53,4 +56,7 @@ const Note = ({ noteId }) => {
     );
   } else return null;
 };
-export default Note;
+
+// now this component will only re render if there are changes to the data
+const memoizedNote = memo(Note);
+export default memoizedNote;
