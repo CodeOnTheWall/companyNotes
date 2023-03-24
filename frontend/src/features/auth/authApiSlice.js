@@ -4,6 +4,8 @@ import { apiSlice } from "../../app/api/apiSlice";
 // non api slice (not communicating with back end) that handles frontend state via reducer functions/action handlers
 import { logOut, setCredentials } from "./authSlice";
 
+// onQueryStarted is a lifecycle hook
+
 // requests to be sent to back end api which receive as responses
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -21,11 +23,14 @@ export const authApiSlice = apiSlice.injectEndpoints({
         url: "/auth/logout",
         method: "POST",
       }),
-      // onQueryStarted is an rtkq function to call inside an endpoint, needs an arg at the beg, its required even if not used
-      // queryFulfilled to see if that finished
+      // onQueryStarted function is an RTK Query lifecycle hook that is called when
+      // the mutation is started. In this hook, queryFulfilled is used to wait until
+      // the mutation is completed before logging out the user and resetting the
+      // API state. needs an arg - required
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           // const { data } = (could do this as queryFulfilled would return a data object)
+          // this queryFulfilled is the query send to /auth/logout
           await queryFulfilled;
           // sets token to null in local state
           dispatch(logOut());
@@ -48,7 +53,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
         try {
           // data should be the aT
           const { data } = await queryFulfilled;
-          // console.log(data);
+          console.log(data);
           const { accessToken } = data;
           // setting redux state with aT
           dispatch(setCredentials({ accessToken }));

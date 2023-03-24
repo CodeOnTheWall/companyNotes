@@ -3,7 +3,7 @@ import { faHouse } from "@fortawesome/free-solid-svg-icons";
 
 import { useNavigate, useLocation } from "react-router-dom";
 
-// SLICES
+// hooks
 import useAuth from "../hooks/useAuth";
 
 const DashFooter = () => {

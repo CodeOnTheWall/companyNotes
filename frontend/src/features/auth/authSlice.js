@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// can see in redux dev tools that after we setCredentials, auth state has the aT
 const authSlice = createSlice({
   name: "auth",
   //   expecting to receive token (aT) back from api
@@ -18,8 +19,10 @@ const authSlice = createSlice({
   },
 });
 
+// 'actions' of the authSlice
 export const { setCredentials, logOut } = authSlice.actions;
 
+// this is imported as authReducer in store, I can do this since this is default export
 export default authSlice.reducer;
 
 export const selectCurrentToken = (state) => state.auth.token;

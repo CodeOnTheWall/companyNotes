@@ -13,6 +13,8 @@ const usePersist = () => {
     localStorage.setItem("persist", JSON.stringify(persist));
   }, [persist]);
 
+  // current persist value, and func to update persist value, can be extracted from
+  // the hook in other components
   return [persist, setPersist];
 };
 export default usePersist;

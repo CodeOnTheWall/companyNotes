@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setCredentials } from "../../features/auth/authSlice";
 
+// from RTKQ docs - fetchBaseQuery
+// very small wrapper around fetch that aims to simplify HTTP requests.
+// It is not a full-blown replacement for axios, superagent, or any other
+// more heavyweight library, but it will cover the vast majority of your HTTP request needs.
+
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:3500",
   // always sends cookie - secure http only cookie that contains rT
@@ -9,6 +14,7 @@ const baseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     // looking at current state, then auth state and getting current token and assigning that token
     const token = getState().auth.token;
+    console.log(token);
 
     // if token, set headers
     if (token) {
@@ -22,13 +28,6 @@ const baseQuery = fetchBaseQuery({
 
 // query wrapper
 const baseQueryWithReauth = async (args, api, extraOptions) => {
-  // request url, method, body
-  // console.log(args)
-  // signal, dispatch, getState() - baseQuery has its own api to use
-  // console.log(api)
-  // custom like {shout: true}
-  // console.log(extraOptions)
-
   // await the result from first req, so we have used access token as defined in baseQuery above
   let result = await baseQuery(args, api, extraOptions);
 

@@ -13,7 +13,8 @@ import { usersApiSlice } from "../users/usersApiSlice";
 const Prefetch = () => {
   useEffect(() => {
     store.dispatch(
-      // endpoint: getNotes, arg to name these: notesList. this data is subscribed to the component, when un mounted, data is unsubscribed
+      // endpoint: getNotes, arg to name these: notesList.
+      // this data is subscribed to the application, when un mounted, data is unsubscribed
       // force query even if data already exists
       notesApiSlice.util.prefetch("getNotes", "notesList", { force: true })
     );

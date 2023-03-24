@@ -8,8 +8,8 @@ import Login from "./features/auth/Login";
 // persists login state, require specific authorization to access routes, and prefetches data
 import PersistLogin from "./features/auth/PersistLogin";
 import RequireAuth from "./features/auth/RequireAuth";
-import { ROLES } from "./config/roles";
 import Prefetch from "./features/auth/Prefetch";
+import { ROLES } from "./config/roles";
 // private routes
 import DashLayout from "./components/DashLayout";
 import Welcome from "./features/auth/Welcome";
@@ -20,7 +20,7 @@ import NotesList from "./features/notes/NotesList";
 import EditNote from "./features/notes/EditNote";
 import NewNote from "./features/notes/NewNote";
 
-function App() {
+export default function App() {
   return (
     <Routes>
       {/* parent route of everything else */}
@@ -80,5 +80,3 @@ function App() {
     </Routes>
   );
 }
-
-export default App;

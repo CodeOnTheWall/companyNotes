@@ -3,7 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 
 // rtkq
 import { useDispatch } from "react-redux";
+// non apiSlice
 import { setCredentials } from "./authSlice";
+// apiSlice to interact with rest api
 import { useLoginMutation } from "./authApiSlice";
 
 import usePersist from "../../hooks/usePersist";
@@ -19,9 +21,12 @@ const Login = () => {
   const [errMsg, setErrMsg] = useState("");
   const [persist, setPersist] = usePersist();
 
+  // redux
   const navigate = useNavigate();
+  // router
   const dispatch = useDispatch();
 
+  // rtkq will auto track loading state
   const [login, { isLoading }] = useLoginMutation();
 
   // focuses the input only when component loads (empty dependency [])
@@ -35,11 +40,11 @@ const Login = () => {
     setErrMsg("");
   }, [username, password]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     try {
       // passing in username and password into login mutation func which sends these as credentials inside the authApiSlice to /auth
-      // this gives us back the aT
+      // this gives us back the aT - can see in redux dev tools
       const { accessToken } = await login({ username, password }).unwrap();
       // dispatching this aT into setCredentials which sets the frontend state object (the state of our app) to be the passed in aT
       dispatch(setCredentials({ accessToken }));

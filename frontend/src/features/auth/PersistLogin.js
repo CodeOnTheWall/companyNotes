@@ -19,7 +19,8 @@ const PersistLogin = () => {
   const [persist] = usePersist();
   // selectCurrentToken is current access token from state, this should be falsy on a refresh, as redux state is wiped
   const token = useSelector(selectCurrentToken);
-  // for strict mode in react 18
+
+  // for strict mode in react 18, inital mount set to false
   const effectRan = useRef(false);
 
   const [trueSuccess, setTrueSuccess] = useState(false);
@@ -30,15 +31,16 @@ const PersistLogin = () => {
 
   useEffect(() => {
     // this should run after second mount (react18, mounts>unmounts>mounts again)
+    // since the effectRan will now be true
     if (effectRan.current === true || process.env.NODE_ENV !== "development") {
       // only want to send rT once, hence only send if effectRan.current === true (second mount via react18)
       const verifyRefreshToken = async () => {
         console.log("verifying refresh token");
         try {
-          // const response =
           await refresh();
-          // const { accessToken } = response.data
           // to give a bit more time to work for credentials to be set
+          setTrueSuccess(true);
+          setTrueSuccess(false);
           setTrueSuccess(true);
         } catch (err) {
           console.error(err);
@@ -49,7 +51,6 @@ const PersistLogin = () => {
       // so if no token, which makes sense as redux state was wiped on refresh, and user checked persist off, then run above func
       if (!token && persist) verifyRefreshToken();
     }
-
     // this runs on unmount of first mount as a clean up func. And this value then perists itself to second mount
     return () => (effectRan.current = true);
     // to not get any warnings
@@ -80,8 +81,6 @@ const PersistLogin = () => {
     content = <Outlet />;
   } else if (token && isUninitialized) {
     //persist: yes, token: yes
-    console.log("token and uninit");
-    console.log(isUninitialized);
     content = <Outlet />;
   }
 
