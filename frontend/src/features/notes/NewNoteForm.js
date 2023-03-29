@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 
 const NewNoteForm = ({ users }) => {
-  console.log(users);
+  // unlike a query, this wont be called until i call it
   const [addNewNote, { isLoading, isSuccess, isError, error }] =
     useAddNewNoteMutation();
 
@@ -28,6 +28,7 @@ const NewNoteForm = ({ users }) => {
   const onTextChanged = (e) => setText(e.target.value);
   const onUserIdChanged = (e) => setUserId(e.target.value);
 
+  // for the button
   const canSave = [title, text, userId].every(Boolean) && !isLoading;
 
   const onSaveNoteClicked = async (e) => {
@@ -40,7 +41,6 @@ const NewNoteForm = ({ users }) => {
   const options = users.map((user) => {
     return (
       <option key={user.id} value={user.id}>
-        {" "}
         {user.username}
       </option>
     );

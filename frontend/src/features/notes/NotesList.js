@@ -4,6 +4,28 @@ import Note from "./Note";
 
 import useAuth from "../../hooks/useAuth";
 
+// FOR REFERENCE UNDERSTANDING THE IDS AND ENTITIES
+// {ids: Array(3), entities: {…}}
+// entities:
+// 63b87ac179e89e3468cbf67a:
+// completed: false
+// createdAt: "2023-01-06T19:47:13.071Z"
+// id: "63b87ac179e89e3468cbf67a"
+// text: "i am the danger\n"
+// ticket: 500
+// title: "test walter admin"
+// updatedAt: "2023-01-11T18:07:27.608Z"
+// user: "63a3258e62cd1419d4e1164a"
+// username: "walter"
+// __v: 0
+// _id: "63b87ac179e89e3468cbf67a"
+// 63befaab1ad8698af8663f5d: {_id: '63befaab1ad8698af8663f5d', user: '63a47c5418602e6e909d69bf', title: 'test jessie employee', text: 'science yo', completed: false, …}
+// 63c0537cc45990c37c39ca5c: {_id: '63c0537cc45990c37c39ca5c', user: '63a47c5418602e6e909d69bf', title: 'Wheres Jessie?', text: 'Cant find Jessie', completed: false, …}
+// ids: Array(3)
+// 0: "63b87ac179e89e3468cbf67a"
+// 1: "63befaab1ad8698af8663f5d"
+// 2: "63c0537cc45990c37c39ca5c"
+
 const NotesList = () => {
   const { username, isManager, isAdmin } = useAuth();
 
@@ -13,7 +35,6 @@ const NotesList = () => {
     isSuccess,
     isError,
     error,
-    // giving a label of notesList stops the fetching from happening after logging out
   } = useGetNotesQuery("notesList", {
     // options available via setupListeners(store.dispatch) in store.js
     // want it to update more often so only 15 seconds
@@ -21,22 +42,6 @@ const NotesList = () => {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
-  // ID is id of each note
-  // console.log(notes);
-  // will get entity objects like this:
-  // 63a3367a50fad9faff4feb4b :
-  // completed: false;
-  // createdAt: "2022-12-21T16:38:18.069Z";
-  // id: "63a3367a50fad9faff4feb4b";
-  // text: "Pollo Hermano";
-  // ticket: 501;
-  // title: "Fring";
-  // updatedAt: "2022-12-21T16:38:18.069Z";
-  // user: "63a3258e62cd1419d4e1164a";
-  // username: "walter";
-  // _id: "63a3367a50fad9faff4feb4b";
-  // WITH the array of ids as well:
-  // 0: "63a3358450fad9faff4feb41"
 
   let content;
 
@@ -55,6 +60,7 @@ const NotesList = () => {
       filteredIds = [...ids];
     } else {
       // else only show the notes of that specific employee (as employee doesnt have authorization to see other notes)
+      // filter method creates a new array
       filteredIds = ids.filter(
         (noteId) => entities[noteId].username === username
       );

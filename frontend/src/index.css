@@ -23,6 +23,7 @@
   --STATUS-OPEN: firebrick;
   --TABLE-BGCOLOR: #fff;
   --TABLE-COLOR: #000;
+  --INPUT-INVALID: #f00;
 }
 
 /* || UTILITY CLASSES */

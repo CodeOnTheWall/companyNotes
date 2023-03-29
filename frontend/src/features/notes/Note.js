@@ -7,6 +7,14 @@ import { memo } from "react";
 
 // this Note.js is the mapped over from NotesList.js, each has a passed in noteId to be selected from state
 const Note = ({ noteId }) => {
+  // querying the db, get back the {data}, then using selectFromResult, we can only select
+  // a specific data piece, in this case, finding the note by inserting the noteId
+  // into the entity
+
+  // OTHER IMPORTANT NOTE - "notesList" tag
+  // our component is auto subscribed to changes to the state and updates the cached result accordingly, so ui stays up to date (once component is mounted)
+  // by adding a "tag", we put a label on this cache, so when a change happens anywhere with the tag "notesList"
+  // the useGetNotesQuery will check the cache first (with the tag notesList), and load from the cache (if cache hasnt expired), if theres no cache or exp, sending another api call
   const { note } = useGetNotesQuery("notesList", {
     selectFromResult: ({ data }) => ({
       // data has ids array and entities, finding the note entity via passing in noteId
@@ -57,6 +65,8 @@ const Note = ({ noteId }) => {
   } else return null;
 };
 
-// now this component will only re render if there are changes to the data
+// By using memo, you can ensure that the component will only re-render
+// when its own props or state change, rather than whenever the parent
+// component re-renders. This can help optimize the performance
 const memoizedNote = memo(Note);
 export default memoizedNote;

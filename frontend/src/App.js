@@ -20,6 +20,11 @@ import NotesList from "./features/notes/NotesList";
 import EditNote from "./features/notes/EditNote";
 import NewNote from "./features/notes/NewNote";
 
+// VIA REDUX DEV TOOLS
+// req is made, pending, subscription added, query fulfilled (meaning tags are provided for invalidation)
+// tags are usersList and notesList, and the mutations in the slices have their own tags for inidivial changes and slice changes
+// when getUsers and getNotes is called, they both provide tags, which is how further mutations can invalidate those tags, and communicate with that cache
+
 export default function App() {
   return (
     <Routes>
@@ -39,11 +44,9 @@ export default function App() {
           <Route
             element={<RequireAuth allowedRoles={[...Object.values(ROLES)]} />}
           >
-            {/* every 15 seconds, notes is being re fetched, every 1 min, users, via pollingInterval options in UsersList and NotesList */}
-            {/* Prefetched data for notes and users (only once, subsequent queries via above) */}
-            {/* reference redux dev tools to visually see the queries that load prior to /dash */}
-            {/* also reference the network tab to see the fetches that are ocurring if need refresher */}
-            {/* this Prefetched data will be available for all wrapped routes/components */}
+            {/* notes and users are being re fetched every 15sec/1min via pollingInterval option in usersList and NotesList */}
+            {/* Prefetched data to be pre made to all routes, only queries once, unless we refresh page (after login) - review dev tools if needed */}
+            {/* subsequent req are from the pollingInterval options, now all routes have this data pre loaded */}
             <Route element={<Prefetch />}>
               <Route path="dash" element={<DashLayout />}>
                 {/* index components render at parents url (/dash) */}

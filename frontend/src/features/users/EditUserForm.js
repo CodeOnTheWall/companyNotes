@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { useUpdateUserMutation, useDeleteUserMutation } from "./usersApiSlice";
 import { useNavigate } from "react-router-dom";
+
+import { useUpdateUserMutation, useDeleteUserMutation } from "./usersApiSlice";
+import { ROLES } from "../../config/roles";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { ROLES } from "../../config/roles";
 
 const USER_REGEX = /^[A-z]{3,20}$/;
 const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/;
 
 const EditUserForm = ({ user }) => {
-  // user being passed from EditUser.js with id via useParams
   const [updateUser, { isLoading, isSuccess, isError, error }] =
     useUpdateUserMutation();
 
@@ -28,7 +29,6 @@ const EditUserForm = ({ user }) => {
   const [validPassword, setValidPassword] = useState(false);
   const [roles, setRoles] = useState(user.roles);
   const [active, setActive] = useState(user.active);
-  // console.log(username);
 
   useEffect(() => {
     setValidUsername(USER_REGEX.test(username));
@@ -52,7 +52,8 @@ const EditUserForm = ({ user }) => {
 
   const onRolesChanged = (e) => {
     const values = Array.from(
-      // selectedOptions is html, so have to convert to an array
+      // selectedOptions is html, so have to convert to an array with the values
+      // mapping over the options to return the value of those options in an array
       e.target.selectedOptions,
       (option) => option.value
     );
@@ -80,7 +81,6 @@ const EditUserForm = ({ user }) => {
   const options = Object.values(ROLES).map((role) => {
     return (
       <option key={role} value={role}>
-        {" "}
         {role}
       </option>
     );
@@ -181,6 +181,7 @@ const EditUserForm = ({ user }) => {
           id="roles"
           name="roles"
           className={`form__select ${validRolesClass}`}
+          // can set more than 1 role
           multiple={true}
           size="3"
           value={roles}

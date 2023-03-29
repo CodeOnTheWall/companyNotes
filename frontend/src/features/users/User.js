@@ -6,16 +6,21 @@ import { useNavigate } from "react-router-dom";
 import { useGetUsersQuery } from "./usersApiSlice";
 
 const User = ({ userId }) => {
-  // destructuring user from the returned result of selectFromResult. this func takes in the whole data object returned from useGetUsersQuery
-  // which is all users (refer to usersController) and in this case, we are returning back the {user} entity that has the passed in userId
+  // const user = useSelector(state => selectUserById(state, userId))
+
+  // querying the db, get back the {data}, then using selectFromResult, we can only select
+  // a specific data piece, in this case, finding the user by inserting the userId
+  // into the entity
+
+  // OTHER IMPORTANT NOTE - "usersList" tag
+  // our component is auto subscribed to changes to the state and updates the cached result accordingly, so ui stays up to date (once component is mounted)
+  // by adding a "tag", we put a label on this cache, so when a change happens anywhere with the tag "usersList"
+  // the useGetUsersQuery will check the cache first (with the tag usersList), and load from the cache (if cache hasnt expired), if theres no cache or exp, sending another api call
   const { user } = useGetUsersQuery("usersList", {
-    // data has ids array and entities, finding the user entity by passing in userId
     selectFromResult: ({ data }) => ({
       user: data?.entities[userId],
     }),
   });
-  // console.log(userId);
-  // console.log(user);
 
   const navigate = useNavigate();
 
@@ -43,6 +48,8 @@ const User = ({ userId }) => {
   } else return null;
 };
 
-// now this component will only re render if there are changes to the data
+// By using memo, you can ensure that the component will only re-render
+// when its own props or state change, rather than whenever the parent
+// component re-renders. This can help optimize the performance
 const memoizedUser = memo(User);
 export default memoizedUser;

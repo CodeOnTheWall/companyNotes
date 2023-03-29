@@ -6,16 +6,15 @@ import { store } from "../../app/store";
 import { notesApiSlice } from "../notes/notesApiSlice";
 import { usersApiSlice } from "../users/usersApiSlice";
 
-// prefetching (prefetch is built in) the data from getNotes and getUsers to be put into redux state
-// wrapping all protected pages in this Prefetch component (for data to be pre-available)
-// The values returned by the API requests for "getNotes" and "getUsers" endpoints will be stored in the store's state
-// under the keys "notesList" and "usersList" respectively. These are also the subscription keys
+// util is from rtkq which contains a list of functions such as prefetch
+
+// pre fetch data to be available to wrapped components. once query is successful,
+// the subscription to the store is active with the respective cache tags notesList and userList
+// so whenever another query is made with same cache tag, redux will check cache first before sending a new api req
 const Prefetch = () => {
   useEffect(() => {
+    // prefetch func is a redux thunk, first arg - endpoint, cache key, and force a new api req regardless if theres a cache already
     store.dispatch(
-      // endpoint: getNotes, arg to name these: notesList.
-      // this data is subscribed to the application, when un mounted, data is unsubscribed
-      // force query even if data already exists
       notesApiSlice.util.prefetch("getNotes", "notesList", { force: true })
     );
     store.dispatch(

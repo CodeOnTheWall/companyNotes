@@ -5,6 +5,7 @@ const useTitle = (title) => {
     const prevTitle = document.title;
     document.title = title;
 
+    // run when component unmounts to return to prev title
     return () => (document.title = prevTitle);
   }, [title]);
 };

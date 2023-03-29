@@ -12,9 +12,10 @@ import { apiSlice } from "../../app/api/apiSlice";
 
 // createEntityAdapter generates a set of prebuilt reducers and selectors for CRUD opps, on a normalized state structure
 // reducers like addOne, deleteOne etc, and selectors like selectAll, selectIds to read content of entity state object
-// entity refers to a data object in an app, i,e. here, Notes, and Users (each are entities)
 const notesAdapter = createEntityAdapter({
   // when notes are completed, they sort to the bottom
+  // if a  = b (both are completed), func returns 0, indicating a and b should remain in same order
+  // otherwise (:) if a is true and b is false return 1, meaning a should come after b, otherwise -1
   sortComparer: (a, b) =>
     a.completed === b.completed ? 0 : a.completed ? 1 : -1,
 });
@@ -33,6 +34,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
           return response.status === 200 && !result.isError;
         },
       }),
+      // keepUnusedDataFor: 5,
       // transforming the res since mongodb id looks like _id, and the entity object looks for just id
       transformResponse: (responseData) => {
         const loadedNotes = responseData.map((note) => {
@@ -52,7 +54,6 @@ export const notesApiSlice = apiSlice.injectEndpoints({
             // giving entire result these tags
             { type: "Note", id: "LIST" },
             // giving each note its own id for individual invalidation
-            // essentially setting the tag on each note to be the same as its id
             ...result.ids.map((id) => ({ type: "Note", id })),
           ];
         } else return [{ type: "Note", id: "LIST" }];
@@ -103,17 +104,17 @@ export const {
   useDeleteNoteMutation,
 } = notesApiSlice;
 
-// returns the query result object - all the notes
+// select method creates memoized selector on entire result obj of getNotes
 export const selectNotesResult = notesApiSlice.endpoints.getNotes.select();
 
-// creates memoized selector
+// creates memoized selector, takes input, and extracts data output
 const selectNotesData = createSelector(
   selectNotesResult,
   // normalized state object with ids & entities
   (notesResult) => notesResult.data
 );
 
-//getSelectors creates these selectors and we rename them with aliases using destructuring
+// getSelectors creates these selectors and we rename them with aliases using destructuring
 export const {
   selectAll: selectAllNotes,
   selectById: selectNoteById,

@@ -35,11 +35,12 @@ There is also a requireAuth wrapper that will specify which routes require which
 The back end rest api will communicate to the front end via Redux Toolkit Query. To help communicate with backend db, I use mongoose.
 The data is prefetched via a prefetch wrapper on protected routes once using a query, and subsequent data refreshes are made via additional queries 
 using query options such as: pollingInterval, refetchOnFocus, and refetchOnMountOrArgChange. These options are available upon setting up listeners 
-in the store.js
+in the store.js RTK Query is important here to provide superior and efficient caching, to avoid
+unnecessary api calls and component re renders via memoized selectors. 
 
 Here are my current dependencies on frontend:
 
-"dependencies": {
+ "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
@@ -58,6 +59,18 @@ Here are my current dependencies on frontend:
   },
 
   And current dependencies on backend:
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Notes MERN Project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
@@ -65,7 +78,7 @@ Here are my current dependencies on frontend:
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "express-async-errors": "^3.1.1",
+    "express-async-handler": "^1.2.0",
     "express-rate-limit": "^6.7.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.8.1",
@@ -76,8 +89,9 @@ Here are my current dependencies on frontend:
   "devDependencies": {
     "nodemon": "^2.0.20"
   }
+}
 
-Please feel free to message me at bralencsundquist@hotmail.com for any recommendations I could add to my first full MERN stack project
+Please feel free to message me at bralensundquist96@gmail.com for any recommendations I could add to my first full MERN stack project
 
 
 

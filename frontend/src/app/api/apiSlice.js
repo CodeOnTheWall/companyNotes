@@ -14,7 +14,7 @@ const baseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     // looking at current state, then auth state and getting current token and assigning that token
     const token = getState().auth.token;
-    console.log(token);
+    // console.log(token);
 
     // if token, set headers
     if (token) {
@@ -28,6 +28,9 @@ const baseQuery = fetchBaseQuery({
 
 // query wrapper
 const baseQueryWithReauth = async (args, api, extraOptions) => {
+  // console.log(args) // request url, method, body
+  // console.log(api) // signal, dispatch, getState()
+  // console.log(extraOptions) //custom like {shout: true}
   // await the result from first req, so we have used access token as defined in baseQuery above
   let result = await baseQuery(args, api, extraOptions);
 
@@ -38,6 +41,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     // send rT to get new aT (arg is /auth/refresh )
     const refreshResult = await baseQuery("/auth/refresh", api, extraOptions);
 
+    // baseQuery returns an object that has a data property
     // data should hold access token
     if (refreshResult?.data) {
       // store the new token by spreading in the access token and set that token in redux state

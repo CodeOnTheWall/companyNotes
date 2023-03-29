@@ -45,6 +45,7 @@ const Login = () => {
     try {
       // passing in username and password into login mutation func which sends these as credentials inside the authApiSlice to /auth
       // this gives us back the aT - can see in redux dev tools
+      // unwrap is to be able to access raw error message if error
       const { accessToken } = await login({ username, password }).unwrap();
       // dispatching this aT into setCredentials which sets the frontend state object (the state of our app) to be the passed in aT
       dispatch(setCredentials({ accessToken }));

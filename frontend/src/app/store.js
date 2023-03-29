@@ -16,8 +16,8 @@ export const store = configureStore({
   // Adding the api middleware enables caching, invalidation, polling,
 
   // This middleware intercepts all dispatched actions that are defined as an RTK
-  // Query endpoint (in the endpoints property of createApi) and handles them. The
-  // middleware will use the baseQuery object you passed to createApi as the default
+  // Query endpoint. The middleware will use the baseQuery object you
+  // passed to createApi as the default (which is apiSlice.middleware)
   // configuration for all network requests made by the RTK Query endpoints.
   // see apiSlice for reminder
   middleware: (getDefaultMiddleware) =>

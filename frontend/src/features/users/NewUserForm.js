@@ -9,7 +9,7 @@ import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { ROLES } from "../../config/roles";
 
 // requirements for user/employee username and pw
-// test regex later
+// ^ - matches start of string, $ matches end of string length between 3-20
 const USER_REGEX = /^[A-z]{3,20}$/;
 const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/;
 
@@ -50,10 +50,11 @@ const NewUserForm = () => {
   const onUsernameChanged = (e) => setUsername(e.target.value);
   const onPasswordChanged = (e) => setPassword(e.target.value);
 
-  // this approach is because allowing more than 1 option to be selected
+  // this approach is because we are allowing more than one option to be selected
   const onRolesChanged = (e) => {
-    // console.log(e.target.selectedOptions); - selected options is an html collection
-    // hence need to convert to an Array
+    // console.log(e.target.selectedOptions); - selected options is an html collection which is not an array
+    // hence need to convert to an Array using Array.from, which converts from array-like iterables, into an array
+    // maping over the options, and returning an array with the values
     const values = Array.from(
       e.target.selectedOptions,
       (option) => option.value
@@ -62,6 +63,7 @@ const NewUserForm = () => {
   };
 
   // all have to be Boolean (true) for button to be clicked
+  // inc the isLoading so button is disabled while mutation isLoading, so button cant be clicked again
   const canSave =
     [roles.length, validUsername, validPassword].every(Boolean) && !isLoading;
 
@@ -77,6 +79,7 @@ const NewUserForm = () => {
   // passing in the ROLES object, mapping over to make each an option
   const options = Object.values(ROLES).map((role) => {
     return (
+      // mapping over each role to give an option for each role
       <option key={role} value={role}>
         {role}
       </option>
@@ -99,6 +102,7 @@ const NewUserForm = () => {
         <div className="form__title-row">
           <h2>New User</h2>
           <div className="form__action-buttons">
+            {/* disabled is true if !canSave */}
             <button className="icon-button" title="Save" disabled={!canSave}>
               <FontAwesomeIcon icon={faSave} />
             </button>

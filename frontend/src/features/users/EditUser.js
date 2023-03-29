@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+
 import EditUserForm from "./EditUserForm";
 import { useGetUsersQuery } from "./usersApiSlice";
 import PulseLoader from "react-spinners/PulseLoader";
@@ -11,6 +12,7 @@ const EditUser = () => {
   const { id } = useParams();
   // console.log(id);
 
+  // reminder that rtkq will check if theres a cache first, if no cache, make api call
   const { user } = useGetUsersQuery("usersList", {
     selectFromResult: ({ data }) => ({
       user: data?.entities[id],

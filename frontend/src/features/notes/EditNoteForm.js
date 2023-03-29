@@ -69,7 +69,6 @@ const EditNoteForm = ({ note, users }) => {
   const options = users.map((user) => {
     return (
       <option key={user.id} value={user.id}>
-        {" "}
         {user.username}
       </option>
     );
@@ -82,6 +81,7 @@ const EditNoteForm = ({ note, users }) => {
   const errContent = (error?.data?.message || delerror?.data?.message) ?? "";
 
   let deleteButton = null;
+
   if (isManager || isAdmin) {
     deleteButton = (
       <button
@@ -113,6 +113,7 @@ const EditNoteForm = ({ note, users }) => {
             {deleteButton}
           </div>
         </div>
+        {/* reminder to connect htmlFor and id in input to same name */}
         <label className="form__label" htmlFor="note-title">
           Title:
         </label>

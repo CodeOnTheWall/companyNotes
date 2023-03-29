@@ -1,7 +1,7 @@
 // injecting endpoints into our api to interact with backend api
 import { apiSlice } from "../../app/api/apiSlice";
 
-// non api slice (not communicating with back end) that handles frontend state via reducer functions/action handlers
+// non api slice (not communicating with back end) that handles frontend state via action handlers
 import { logOut, setCredentials } from "./authSlice";
 
 // onQueryStarted is a lifecycle hook
@@ -34,7 +34,8 @@ export const authApiSlice = apiSlice.injectEndpoints({
           await queryFulfilled;
           // sets token to null in local state
           dispatch(logOut());
-          // to get rid of subscription and 'clear' apiSlice as well, to clear out cache and query subscription
+          // to get rid of subscriptions and 'clear' apiSlice as well, to clear out cache and query subscription
+          // this will stop notes and users from being fetched
           setTimeout(() => {
             dispatch(apiSlice.util.resetApiState());
           }, 1000);
@@ -53,7 +54,6 @@ export const authApiSlice = apiSlice.injectEndpoints({
         try {
           // data should be the aT
           const { data } = await queryFulfilled;
-          console.log(data);
           const { accessToken } = data;
           // setting redux state with aT
           dispatch(setCredentials({ accessToken }));

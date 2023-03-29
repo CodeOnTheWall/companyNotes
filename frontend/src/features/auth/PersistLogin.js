@@ -15,7 +15,7 @@ import { selectCurrentToken } from "./authSlice";
 import usePersist from "../../hooks/usePersist";
 
 const PersistLogin = () => {
-  // true or false
+  // true
   const [persist] = usePersist();
   // selectCurrentToken is current access token from state, this should be falsy on a refresh, as redux state is wiped
   const token = useSelector(selectCurrentToken);
@@ -40,8 +40,6 @@ const PersistLogin = () => {
           await refresh();
           // to give a bit more time to work for credentials to be set
           setTrueSuccess(true);
-          setTrueSuccess(false);
-          setTrueSuccess(true);
         } catch (err) {
           console.error(err);
         }
@@ -51,12 +49,15 @@ const PersistLogin = () => {
       // so if no token, which makes sense as redux state was wiped on refresh, and user checked persist off, then run above func
       if (!token && persist) verifyRefreshToken();
     }
+    // cleanup func
     // this runs on unmount of first mount as a clean up func. And this value then perists itself to second mount
+    // since useRef value stays on component re renders
     return () => (effectRan.current = true);
     // to not get any warnings
     // eslint-disable-next-line
   }, []);
 
+  // need outlet since this wraps other components
   let content;
   if (!persist) {
     // persist: no

@@ -49,10 +49,6 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         return usersAdapter.setAll(initialState, loadedUsers);
       },
 
-      // providing tags here to be invalidated in the mutated methods for re-fetching of data
-      // id: "LIST" indicates the data returned from endpoint is complete list of users, good for invalidating after deletion or adding, as whole list would change
-      // also mapping over the ids of each user, so each user will have tag type: "User", and an id, good for updating
-
       // result is data/query result returned from endpoint (getUsers) - loadedUsers,
       // providesTags function generates an array of tags based on the
       // result of the query. These tags are used to cache the query result,
@@ -125,25 +121,17 @@ export const {
   useDeleteUserMutation,
 } = usersApiSlice;
 
-// when we refresh page, data from state.users is wiped, to persist across refresh:
-
-// MEMOIZED SELECTORS - HELPS WITH UNECESSARY COMPONENT RE RENDERS (or everything re rendering in a component),
-// AND HELPS REDUCE API CALLS
-// to create a memoized selector: select() method and createSelector() method
-// select() creates memoized selector for specific endpoint, and the entire result obj
-// of that endpoint, such as the data, isLoading, isSuccess, error etc
-// createSelector() also creates memoized selector, but takes a func as an input
-// and returns the output from second arg, specifically below as an example,
-// the data
-// WHY? memoized selectors via redux check the state to see if cache has changed,
-// if it hasnt changed, it loads same cache without another http req,
-// if it has changed, it updates the cache and still doesnt do another req (and then will use this new cache)
-// this is way more efficient than sending http req every time
-
-// ANOTHER IMPORTANT MEMOIZED NOTE:
-// this can help with unecessary component re renders, since we can render based on the specific
-// data we need via below selectors (specific part of state)
-// i.e. selectAll, component will only render the users that have changed, not all
+// MEMOIZED SELECTORS - take an input func, and output func
+// both below create memoized selectors
+// select() creates selector for specific endpoint and returns entire result obj (data, isLoading, isSuccess, error etc)
+// createSelector() creates selector based off the output data from the input function
+// memoized selectors work by comparing the input parameters for changes, in this scenario
+// if the entire getUsers result hasnt changed, selectUsersResult will load same cache,
+// and if the data (usersResult.data) from selectUsersResult hasnt changed, selectUsersResult will load same cache
+// if cache has changed, the memoized selectors will update the cache to the new cache
+// now the component that uses the selector can re render, but only re render the exact changes/differences instead of the entire component
+// so whether cache has changed or not, the selector updates the cache, reducing excess entire component re renders,
+// and api calls
 
 export const selectUsersResult = usersApiSlice.endpoints.getUsers.select();
 
@@ -161,6 +149,7 @@ export const {
   selectById: selectUserById,
   selectIds: selectUserIds,
   // the entity adapter (which is usersAdapter) contains a getSelector func that returns a set of selectors to read contents of entity state object
+  // pass in a selector that returns the users slice of state (in this case selectUsersData which is data)
 } = usersAdapter.getSelectors(
   // return state from selectUsersData, if null ?? load initialState
   (state) => selectUsersData(state) ?? initialState

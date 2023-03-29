@@ -22,6 +22,7 @@ const useAuth = () => {
     isManager = roles.includes("Manager");
     isAdmin = roles.includes("Admin");
 
+    // setting status to highest role
     if (isManager) status = "Manager";
     if (isAdmin) status = "Admin";
 
